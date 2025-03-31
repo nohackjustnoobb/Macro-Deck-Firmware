@@ -15,14 +15,16 @@ public:
       draw(i);
   }
 
-  bool is(String &type) { return type.startsWith("wi"); }
+  bool is(String &type) {
+    return type.startsWith("wi") || type.startsWith("ri");
+  }
 
-  bool handle(Message &mesg) {
+  void handleWI(Message &mesg) {
     int16_t idx = mesg.type.substring(2).toInt();
     int size = mesg.data.toInt();
 
     if (size <= 0)
-      return false;
+      return;
 
     Serial.println("rd");
 
@@ -30,6 +32,38 @@ public:
     int replaced = Serial.readBytes(buf, size);
 
     write(idx, buf, size);
+  }
+
+  void handleRI(Message &mesg) {
+    int16_t idx = mesg.type.substring(2).toInt();
+
+    File file =
+        SD.open(("/" + std::to_string(idx) + ".jpg").c_str(), FILE_READ);
+
+    if (!file) {
+      Serial.println("!ok");
+      return;
+    }
+
+    Serial.println(Message(String("rd?"), String(file.size())).encode());
+
+    while (Serial.available() <= 0) {
+    }
+
+    String reply = Serial.readString();
+    if (reply != "rd")
+      return;
+
+    while (file.available())
+      Serial.write(file.read());
+  }
+
+  bool handle(Message &mesg) {
+    if (mesg.type.startsWith("wi"))
+      handleWI(mesg);
+
+    if (mesg.type.startsWith("ri"))
+      handleRI(mesg);
 
     return false;
   }

@@ -27,3 +27,15 @@ To write an icon, the following steps should be followed:
 5. Once writing is complete:
    - "ok" is returned if the write operation is successful.
    - "!ok" is returned if the write operation fails.
+
+### Reading Icons
+
+To read an icon, the following steps should be followed:
+
+1. A message is sent with the type "ri" (read icon) followed by the index (`idx`) of the icon.
+2. The receiver responds with either:
+   - "!ok" if the request is invalid or the icon cannot be read.
+   - "rd?" followed by the byte size of the icon if the request is valid.
+3. If "rd?" is received, a message with the type "rd" (ready) must be sent to start the transmission.
+4. The receiver will then transmit the icon data.
+5. Once transmission is complete, the process ends.
