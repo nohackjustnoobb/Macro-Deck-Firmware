@@ -13,3 +13,7 @@
 #define BUTTONS_PER_ROW 4
 #define NUM_OF_ROWS 2
 #define GAP_SIZE 20
+
+#define OK "2ok"
+#define NOT_OK "3!ok"
+#define RD "2rd"

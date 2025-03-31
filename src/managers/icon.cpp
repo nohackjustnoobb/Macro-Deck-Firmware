@@ -26,7 +26,7 @@ public:
     if (size <= 0)
       return;
 
-    Serial.println("rd");
+    Serial.println(RD);
 
     char buf[size];
     int replaced = Serial.readBytes(buf, size);
@@ -41,7 +41,7 @@ public:
         SD.open(("/" + std::to_string(idx) + ".jpg").c_str(), FILE_READ);
 
     if (!file) {
-      Serial.println("!ok");
+      Serial.println(OK);
       return;
     }
 
@@ -51,7 +51,7 @@ public:
     }
 
     String reply = Serial.readString();
-    if (reply != "rd")
+    if (reply != RD)
       return;
 
     while (file.available())
@@ -93,15 +93,14 @@ public:
     File file =
         SD.open(("/" + std::to_string(idx) + ".jpg").c_str(), FILE_WRITE);
     if (!file) {
-      Serial.println("!ok");
+      Serial.println(NOT_OK);
       return;
     }
 
-    if (file.write((const uint8_t *)buf, size)) {
-      Serial.println("ok");
-    } else {
-      Serial.println("!ok");
-    }
+    if (file.write((const uint8_t *)buf, size))
+      Serial.println(OK);
+    else
+      Serial.println(NOT_OK);
 
     file.close();
 
