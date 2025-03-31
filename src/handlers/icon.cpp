@@ -75,7 +75,7 @@ public:
     int16_t col = x / (*_width / BUTTONS_PER_ROW);
 
     Serial.println(
-        Message("ci" + String(row * BUTTONS_PER_ROW + col), "").encode());
+        Message("ic" + String(row * BUTTONS_PER_ROW + col), "").encode());
 
     return false;
   }

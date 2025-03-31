@@ -1,3 +1,4 @@
+#pragma once
 #include "message.h"
 
 class Handler {

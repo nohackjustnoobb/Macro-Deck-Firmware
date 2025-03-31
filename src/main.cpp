@@ -1,11 +1,12 @@
 #include <TFT_eSPI.h>
 #include <TJpg_Decoder.h>
 #include <spi.h>
+#include <vector>
 
-#include "managers/icon.cpp"
+#include "handlers/icon.cpp"
+#include "handlers/info.cpp"
 #include "models/constants.h"
 #include "models/message.h"
-#include <vector>
 
 // Hardware related
 TFT_eSPI tft = TFT_eSPI();
@@ -59,6 +60,7 @@ void setup() {
   // Initialise handlers
   icon = IconManager(&buttonsHeight, &width);
   handlers.push_back(&icon);
+  handlers.push_back(new InfoHandler(&height, &width));
 
   tft.fillRect(0, buttonsHeight + GAP_SIZE, width, statusBarHeight, TFT_RED);
 }
