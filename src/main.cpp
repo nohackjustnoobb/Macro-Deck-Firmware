@@ -5,6 +5,7 @@
 
 #include "handlers/icon.cpp"
 #include "handlers/info.cpp"
+#include "handlers/status.cpp"
 #include "models/constants.h"
 #include "models/message.h"
 
@@ -23,6 +24,7 @@ bool tftOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap) {
 // Software related
 int16_t height, width, buttonsHeight, statusBarHeight;
 IconManager icon;
+StatusManager status;
 std::vector<Handler *> handlers;
 
 void setup() {
@@ -59,10 +61,10 @@ void setup() {
 
   // Initialise handlers
   icon = IconManager(&buttonsHeight, &width);
+  status = StatusManager(buttonsHeight, &statusBarHeight, &width);
   handlers.push_back(&icon);
+  handlers.push_back(&status);
   handlers.push_back(new InfoHandler(&height, &width));
-
-  tft.fillRect(0, buttonsHeight + GAP_SIZE, width, statusBarHeight, TFT_RED);
 }
 
 String raw;

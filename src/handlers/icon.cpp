@@ -1,4 +1,5 @@
 #include <TJpg_Decoder.h>
+#include <sstream>
 
 #include "../models/constants.h"
 #include "../models/handler.h"
@@ -15,33 +16,38 @@ public:
       draw(i);
   }
 
-  bool is(String &type) {
-    return type.startsWith("wi") || type.startsWith("ri");
-  }
+  bool is(String &type) { return type == "wi" || type == "ri"; }
 
   void handleWI(Message &mesg) {
-    int16_t idx = mesg.type.substring(2).toInt();
-    int size = mesg.data.toInt();
+    int16_t idx;
+    int size;
 
-    if (size <= 0)
+    // TODO remove the usage of sstream to reduce the size of the binary
+    std::istringstream iss(mesg.data.c_str());
+    iss >> idx;
+    iss >> size;
+
+    if (size <= 0) {
+      Serial.println(NOT_OK);
       return;
+    }
 
     Serial.println(RD);
 
     char buf[size];
-    int replaced = Serial.readBytes(buf, size);
+    Serial.readBytes(buf, size);
 
     write(idx, buf, size);
   }
 
   void handleRI(Message &mesg) {
-    int16_t idx = mesg.type.substring(2).toInt();
+    int16_t idx = mesg.data.toInt();
 
     File file =
         SD.open(("/" + std::to_string(idx) + ".jpg").c_str(), FILE_READ);
 
     if (!file) {
-      Serial.println(OK);
+      Serial.println(NOT_OK);
       return;
     }
 
@@ -51,18 +57,20 @@ public:
     }
 
     String reply = Serial.readString();
-    if (reply != RD)
+    if (reply != RD) {
+      Serial.println(NOT_OK);
       return;
+    }
 
     while (file.available())
       Serial.write(file.read());
   }
 
   bool handle(Message &mesg) {
-    if (mesg.type.startsWith("wi"))
+    if (mesg.type == "wi")
       handleWI(mesg);
 
-    if (mesg.type.startsWith("ri"))
+    if (mesg.type == "ri")
       handleRI(mesg);
 
     return false;
@@ -74,8 +82,7 @@ public:
     int16_t row = y / (*_height / NUM_OF_ROWS);
     int16_t col = x / (*_width / BUTTONS_PER_ROW);
 
-    Serial.println(
-        Message("ic" + String(row * BUTTONS_PER_ROW + col), "").encode());
+    Serial.println(Message("ic", String(row * BUTTONS_PER_ROW + col)).encode());
 
     return false;
   }
