@@ -3,6 +3,8 @@
 
 class Handler {
 public:
+  virtual void handle() {};
+
   virtual bool is(String &type) { return false; };
 
   virtual bool handle(Message &mesg) { return false; };
