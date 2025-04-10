@@ -2,7 +2,7 @@
 #include <spi.h>
 #include <vector>
 
-#include "handlers/icon.cpp"
+#include "handlers/button.cpp"
 #include "handlers/info.cpp"
 #include "handlers/status/status.cpp"
 #include "models/common.h"

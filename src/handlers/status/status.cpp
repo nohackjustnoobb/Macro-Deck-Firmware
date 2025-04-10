@@ -24,14 +24,14 @@ public:
   bool is(String &type) { return type == "ss"; }
 
   bool handle(Message &mesg) {
+    std::vector<String> datas = mesg.parse();
+
     int16_t x, y;
     int size;
 
-    // TODO remove the usage of sstream to reduce the size of the binary
-    std::istringstream iss(mesg.data.c_str());
-    iss >> x;
-    iss >> y;
-    iss >> size;
+    x = datas[0].toInt();
+    y = datas[1].toInt();
+    size = datas[2].toInt();
 
     if (size <= 0) {
       Serial.println(NOT_OK);
@@ -48,7 +48,8 @@ public:
     Serial.println(result ? NOT_OK : OK);
 
     // Reset selected after handling the message
-    selected = "";
+    if (result)
+      selected = "";
 
     return false;
   }
@@ -63,5 +64,5 @@ public:
 
 private:
   std::vector<Module *> modules; // List of modules to draw in the status bar
-  String selected;               // selected for status bar, if needed
+  String selected;               // selected for status bar
 };
