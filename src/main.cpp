@@ -1,17 +1,18 @@
-#include <TFT_eSPI.h>
 #include <TJpg_Decoder.h>
 #include <spi.h>
 #include <vector>
 
 #include "handlers/icon.cpp"
 #include "handlers/info.cpp"
-#include "handlers/status.cpp"
+#include "handlers/status/status.cpp"
+#include "models/common.h"
 #include "models/constants.h"
 #include "models/message.h"
 
 // Hardware related
-TFT_eSPI tft = TFT_eSPI();
 SPIClass _spi(HSPI);
+TFT_eSPI tft;
+ESP32Time rtc;
 
 bool tftOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap) {
   if (y >= tft.height())
@@ -22,10 +23,8 @@ bool tftOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap) {
 }
 
 // Software related
-int16_t height, width, buttonsHeight, statusBarHeight;
-IconManager icon;
-StatusManager status;
 std::vector<Handler *> handlers;
+int16_t height, width, buttonsHeight, statusBarHeight;
 
 void setup() {
   // Initialize Serial
@@ -59,12 +58,13 @@ void setup() {
   buttonsHeight = imgSize * NUM_OF_ROWS + GAP_SIZE * (NUM_OF_ROWS - 1);
   statusBarHeight = height - buttonsHeight - GAP_SIZE;
 
+  // Initialize the ESP32 RTC
+  rtc.setTime(0, 0, 0, 4, 6, 1989);
+
   // Initialise handlers
-  icon = IconManager(&buttonsHeight, &width);
-  status = StatusManager(buttonsHeight, &statusBarHeight, &width);
-  handlers.push_back(&icon);
-  handlers.push_back(&status);
-  handlers.push_back(new InfoHandler(&height, &width));
+  handlers.push_back(new IconManager());
+  handlers.push_back(new StatusManager());
+  handlers.push_back(new InfoHandler());
 }
 
 String raw;

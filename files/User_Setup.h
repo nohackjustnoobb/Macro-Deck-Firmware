@@ -52,11 +52,11 @@
 //#define ILI9481_DRIVER
 //#define ILI9486_DRIVER
 //#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
-#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
+//#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
 //#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
 //#define RM68140_DRIVER
-//#define ST7796_DRIVER
+#define ST7796_DRIVER
 //#define SSD1351_DRIVER
 //#define SSD1963_480_DRIVER
 //#define SSD1963_800_DRIVER
@@ -129,8 +129,8 @@
 // driven with a PWM signal or turned OFF/ON then this must be handled by the user
 // sketch. e.g. with digitalWrite(TFT_BL, LOW);
 
-#define TFT_BL   27            // LED back-light control pin
-#define TFT_BACKLIGHT_ON HIGH  // Level to turn ON back-light (HIGH or LOW)
+ #define TFT_BL   27            // LED back-light control pin
+ #define TFT_BACKLIGHT_ON HIGH  // Level to turn ON back-light (HIGH or LOW)
 
 
 

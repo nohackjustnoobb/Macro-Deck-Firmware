@@ -5,4 +5,7 @@
 .vscode/ipch
 .vscode/settings.json
 
+files/User_Setup.h
+files/ST7796_Init.h
+
 lib/TFT_eSPI
