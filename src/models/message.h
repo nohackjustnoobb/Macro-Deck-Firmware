@@ -27,6 +27,8 @@ public:
 
   Message(String type, String data);
 
+  Message(String type, std::vector<String> data);
+
   std::vector<String> parse();
 
   String encode();

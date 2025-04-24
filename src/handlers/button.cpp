@@ -5,14 +5,13 @@
 #include "../models/constants.h"
 #include "../models/handler.h"
 
-// TODO redo the whole file based on the new README
-// TODO sp, ld
 class IconManager : public Handler {
 public:
   IconManager() { draw(); }
 
   bool is(String &type) {
-    return type == "wi" || type == "ri" || type == "di" || type == "df";
+    return type == "wi" || type == "ri" || type == "di" || type == "df" ||
+           type == "sp" || type == "ld";
   }
 
   void handleWI(Message &mesg) {
@@ -60,6 +59,49 @@ public:
 
   void handleDF(Message &mesg) { delete_dir(mesg.data); }
 
+  void handleSP(Message &mesg) {
+    String tempPath = "/" + mesg.data;
+    if (!SD.exists(tempPath)) {
+      Serial.println(NOT_OK);
+      return;
+    }
+
+    path = tempPath;
+    draw();
+
+    Serial.println(OK);
+  }
+
+  void listDirectory(File dir, std::vector<String> &paths) {
+    while (true) {
+      File entry = dir.openNextFile();
+      if (!entry)
+        break;
+
+      // don't list hidden files
+      if (entry.name()[0] == '.')
+        continue;
+
+      if (entry.isDirectory())
+        listDirectory(entry, paths);
+
+      paths.push_back(entry.path());
+      entry.close();
+    }
+  }
+
+  void handleLD(Message &mesg) {
+    std::vector<String> paths = {};
+
+    File root = SD.open("/");
+    if (root) {
+      listDirectory(root, paths);
+      Serial.println(Message("ld", paths).encode());
+    } else {
+      Serial.println(NOT_OK);
+    }
+  }
+
   bool handle(Message &mesg) {
     if (mesg.type == "wi")
       handleWI(mesg);
@@ -73,6 +115,12 @@ public:
     if (mesg.type == "df")
       handleDF(mesg);
 
+    if (mesg.type == "sp")
+      handleSP(mesg);
+
+    if (mesg.type == "ld")
+      handleLD(mesg);
+
     return false;
   }
 
@@ -84,36 +132,36 @@ public:
     int idx = row * BUTTONS_PER_ROW + col;
 
     if (std::find(folders.begin(), folders.end(), idx) != folders.end()) {
-      dir += "/" + String(idx);
+      path += "/" + String(idx);
       draw();
     } else {
       if (idx == 0) {
-        int lastIdx = dir.lastIndexOf('/');
+        int lastIdx = path.lastIndexOf('/');
         if (lastIdx != 0 && lastIdx != -1) {
-          dir = dir.substring(0, lastIdx);
+          path = path.substring(0, lastIdx);
           draw();
           return false;
         }
       }
 
-      Serial.println(Message("bc", dir + "/" + String(idx)).encode());
+      Serial.println(Message("bc", path + "/" + String(idx)).encode());
     }
 
     return false;
   }
 
   void draw() {
-    if (!SD.exists(dir))
-      dir = "/default";
+    if (!SD.exists(path))
+      path = "/default";
 
-    File file = SD.open(dir);
+    File file = SD.open(path);
     if (!file)
       return;
 
     tft.fillRect(0, 0, width, buttonsHeight, TFT_BLACK);
 
-    if (SD.exists(dir + "/aio.jpg"))
-      return draw_aio(dir);
+    if (SD.exists(path + "/aio.jpg"))
+      return draw_aio(path);
 
     folders.clear();
     File entry;
@@ -125,7 +173,7 @@ public:
       idx = fileName.toInt();
 
       if (idx != -1)
-        draw_idx(dir, idx);
+        draw_idx(path, idx);
 
       if (entry.isDirectory())
         folders.push_back(idx);
@@ -175,6 +223,6 @@ public:
   }
 
 private:
-  String dir = "/default";
+  String path = "/default";
   std::vector<int> folders = {};
 };

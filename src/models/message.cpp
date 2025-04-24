@@ -20,6 +20,19 @@ Message::Message(String type, String data) {
   this->data = data;
 }
 
+Message::Message(String type, std::vector<String> data) {
+  String str;
+  for (int i = 0; i < data.size(); i++) {
+    if (i)
+      str += ' ';
+
+    str += data[i];
+  }
+
+  this->type = type;
+  this->data = str;
+}
+
 std::vector<String> Message::parse() {
   // TODO remove the usage of sstream to reduce the size of the binary
 

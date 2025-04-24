@@ -25,7 +25,7 @@ public:
 
     String str;
     for (int i = 0; i < sizeof(infos) / sizeof(int16_t); i++) {
-      if (infos[i])
+      if (i)
         str += ' ';
 
       str += String(infos[i]);

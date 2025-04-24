@@ -2,6 +2,8 @@
 
 ## SD Card Folder and File Structure
 
+_Note that the path cannot contain any spaces._
+
 ### Root Directory (First Layer)
 
 Each folder in the root directory represents a profile.
@@ -124,7 +126,7 @@ To get the directory, the following steps should be followed:
 1. A message is sent with the type `ld` (list directory).
 2. The receiver responds with either:
    - `!ok` if the request is invalid or the icon cannot be read.
-   - `ld` with the data portion filled with the JSON of the directory.
+   - `ld` with all the paths of files under the root directory split by space.
 
 ### Handling Button Clicks
 
