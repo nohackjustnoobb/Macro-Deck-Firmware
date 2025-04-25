@@ -17,14 +17,11 @@ public:
     if (selected.isEmpty())
       return;
 
-    // FIXME dont know why it is called when selected is cleared.
-    // Maybe the tft have delay and not blocking.
-
-    // for (auto module : modules) {
-    //   if (module->name != selected)
-    //     continue;
-    //   module->draw();
-    // }
+    for (auto module : modules) {
+      if (module->name != selected)
+        continue;
+      module->draw();
+    }
   }
 
   bool is(String &type) { return type == "ss"; }
@@ -53,7 +50,7 @@ public:
                                      (const uint8_t *)buf, size);
     Serial.println(result ? NOT_OK : OK);
 
-    if (result)
+    if (!result)
       selected.clear();
 
     return false;
