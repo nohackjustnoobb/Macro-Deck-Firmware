@@ -1,9 +1,9 @@
 #include <TJpg_Decoder.h>
-#include <sstream>
 
 #include "../models/common.h"
 #include "../models/constants.h"
 #include "../models/handler.h"
+#include "../utils.hpp"
 
 class ButtonManager : public Handler {
 public:
@@ -62,9 +62,11 @@ public:
   }
 
   void handleDF(Message &mesg) {
-    Serial.println(SD.rmdir(mesg.data) ? OK : NOT_OK);
+    bool result = removeDirectoryRecursive(mesg.data);
+    Serial.println(result ? OK : NOT_OK);
 
-    draw();
+    if (result)
+      draw();
   }
 
   void handleSP(Message &mesg) {
@@ -111,7 +113,7 @@ public:
   }
 
   void handleCF(Message &mesg) {
-    Serial.println(SD.mkdir(mesg.data) ? OK : NOT_OK);
+    Serial.println(mkdirRecursive(mesg.data) ? OK : NOT_OK);
   }
 
   bool handle(Message &mesg) {
@@ -209,7 +211,16 @@ public:
   }
 
   void write(String path, const char *buf, int size) {
-    File file = SD.open(path, FILE_WRITE);
+    int lastSlash = path.lastIndexOf('/');
+    if (lastSlash != -1) {
+      String dirPath = path.substring(0, lastSlash);
+      if (!mkdirRecursive(dirPath)) {
+        Serial.println(NOT_OK);
+        return;
+      }
+    }
+
+    File file = SD.open(path, FILE_WRITE, true);
     if (!file) {
       Serial.println(NOT_OK);
       return;
