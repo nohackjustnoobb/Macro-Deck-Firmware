@@ -138,8 +138,8 @@ When an button is clicked, a message will be sent with the type `bc` (button cli
 
 To obtain device information, follow these steps:
 
-1. Send a message with the type `gi` (get info).
-2. The receiver will respond with a message of type `gi`.
+1. Send a message with the type `li` (list info).
+2. The receiver will respond with a message of type `li`.
 3. The data portion contains infomations in the following order (splitted by spaces):
    - Width
    - Height

@@ -135,9 +135,9 @@ void handleTouch() {
 }
 
 void loop() {
-  handleSerial();
-  handleTouch();
-
   for (auto handler : handlers)
     handler->handle();
+
+  handleSerial();
+  handleTouch();
 }

@@ -14,24 +14,30 @@ public:
   }
 
   void handle() {
-    for (auto module : modules) {
-      if (module->name != selected)
-        continue;
-      module->draw();
-    }
+    if (selected.isEmpty())
+      return;
+
+    // FIXME dont know why it is called when selected is cleared.
+    // Maybe the tft have delay and not blocking.
+
+    // for (auto module : modules) {
+    //   if (module->name != selected)
+    //     continue;
+    //   module->draw();
+    // }
   }
 
   bool is(String &type) { return type == "ss"; }
 
   bool handle(Message &mesg) {
-    std::vector<String> datas = mesg.parse();
+    std::vector<String> data = mesg.parse();
 
     int16_t x, y;
     int size;
 
-    x = datas[0].toInt();
-    y = datas[1].toInt();
-    size = datas[2].toInt();
+    x = data[0].toInt();
+    y = data[1].toInt();
+    size = data[2].toInt();
 
     if (size <= 0) {
       Serial.println(NOT_OK);
@@ -47,9 +53,8 @@ public:
                                      (const uint8_t *)buf, size);
     Serial.println(result ? NOT_OK : OK);
 
-    // Reset selected after handling the message
     if (result)
-      selected = "";
+      selected.clear();
 
     return false;
   }

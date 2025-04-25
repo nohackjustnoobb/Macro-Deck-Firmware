@@ -1,6 +1,5 @@
 #include "message.h"
 #include <HardwareSerial.h>
-#include <sstream>
 
 Message::Message() { ok = false; }
 
@@ -34,17 +33,23 @@ Message::Message(String type, std::vector<String> data) {
 }
 
 std::vector<String> Message::parse() {
-  // TODO remove the usage of sstream to reduce the size of the binary
+  std::vector<String> data;
 
-  std::stringstream ss(data.c_str());
-  String word;
-  std::vector<String> words;
+  String temp;
+  for (char c : this->data) {
+    if (c == ' ') {
+      data.push_back(String(temp));
+      temp.clear();
+      continue;
+    }
 
-  while (ss >> word.begin()) {
-    words.push_back(word);
+    temp.concat(c);
   }
 
-  return words;
+  if (temp.length() > 0)
+    data.push_back(String(temp));
+
+  return data;
 }
 
 String Message::encode() { return String(type.length()) + type + data; }
