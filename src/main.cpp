@@ -62,7 +62,7 @@ void setup() {
   rtc.setTime(0, 0, 0, 4, 6, 1989);
 
   // Initialise handlers
-  handlers.push_back(new IconManager());
+  handlers.push_back(new ButtonManager());
   handlers.push_back(new StatusManager());
   handlers.push_back(new InfoHandler());
 }

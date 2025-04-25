@@ -5,13 +5,13 @@
 #include "../models/constants.h"
 #include "../models/handler.h"
 
-class IconManager : public Handler {
+class ButtonManager : public Handler {
 public:
-  IconManager() { draw(); }
+  ButtonManager() { draw(); }
 
   bool is(String &type) {
     return type == "wi" || type == "ri" || type == "di" || type == "df" ||
-           type == "sp" || type == "ld";
+           type == "sp" || type == "ld" || type == "cf";
   }
 
   void handleWI(Message &mesg) {
@@ -55,9 +55,17 @@ public:
       Serial.write(file.read());
   }
 
-  void handleDI(Message &mesg) { delete_(mesg.data); }
+  void handleDI(Message &mesg) {
+    Serial.println(SD.remove(mesg.data) ? OK : NOT_OK);
 
-  void handleDF(Message &mesg) { delete_dir(mesg.data); }
+    draw();
+  }
+
+  void handleDF(Message &mesg) {
+    Serial.println(SD.rmdir(mesg.data) ? OK : NOT_OK);
+
+    draw();
+  }
 
   void handleSP(Message &mesg) {
     String tempPath = "/" + mesg.data;
@@ -102,6 +110,10 @@ public:
     }
   }
 
+  void handleCF(Message &mesg) {
+    Serial.println(SD.mkdir(mesg.data) ? OK : NOT_OK);
+  }
+
   bool handle(Message &mesg) {
     if (mesg.type == "wi")
       handleWI(mesg);
@@ -120,6 +132,9 @@ public:
 
     if (mesg.type == "ld")
       handleLD(mesg);
+
+    if (mesg.type == "cf")
+      handleCF(mesg);
 
     return false;
   }
@@ -206,18 +221,6 @@ public:
       Serial.println(NOT_OK);
 
     file.close();
-
-    draw();
-  }
-
-  void delete_dir(String path) {
-    Serial.println(SD.rmdir(path) ? OK : NOT_OK);
-
-    draw();
-  }
-
-  void delete_(String path) {
-    Serial.println(SD.remove(path) ? OK : NOT_OK);
 
     draw();
   }

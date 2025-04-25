@@ -108,6 +108,17 @@ To delete an icon, follow these steps:
    - `ok` if the deletion was successful.
    - `!ok` if the deletion failed or the index is invalid.
 
+### Creating Folder
+
+To create a folder, follow these steps:
+
+1. A message is sent with the type `cf` (create folder).
+2. The data portion contains:
+   - The path or identifier of the folder.
+3. The receiver responds with:
+   - `ok` if the folder creation was successful.
+   - `!ok` if the folder creation failed.
+
 ### Deleting Folder
 
 To delete a folder, follow these steps:
@@ -132,7 +143,7 @@ To get the directory, the following steps should be followed:
 
 When an button is clicked, a message will be sent with the type `bc` (button clicked). The data portion contains:
 
-- The path of the clicked button.
+- The path (without extension) of the clicked button.
 
 ### Retrieving Device Information
 
