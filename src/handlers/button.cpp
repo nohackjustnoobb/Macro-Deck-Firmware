@@ -24,12 +24,43 @@ public:
       return;
     }
 
+    int lastSlash = path.lastIndexOf('/');
+    if (lastSlash != -1) {
+      String dirPath = path.substring(0, lastSlash);
+      if (!mkdirRecursive(dirPath)) {
+        Serial.println(NOT_OK);
+        return;
+      }
+    }
+
+    File file = SD.open(path, FILE_WRITE, true);
+    if (!file) {
+      Serial.println(NOT_OK);
+      return;
+    }
+
     Serial.println(RD);
 
-    char buf[size];
-    Serial.readBytes(buf, size);
+    int bytesRead = 0;
 
-    write(path, buf, size);
+    while (bytesRead < size) {
+      while (Serial.available() <= 0) {
+      }
+
+      size_t result = file.write(Serial.read());
+      if (!result) {
+        Serial.println(NOT_OK);
+        file.close();
+        return;
+      }
+
+      bytesRead++;
+    }
+
+    Serial.println(OK);
+    file.close();
+
+    draw();
   }
 
   void handleRI(Message &mesg) {
@@ -207,32 +238,6 @@ public:
 
   void draw_aio(String base_dir) {
     TJpgDec.drawSdJpg(0, 0, (base_dir + "/aio.jpg").c_str());
-  }
-
-  void write(String path, const char *buf, int size) {
-    int lastSlash = path.lastIndexOf('/');
-    if (lastSlash != -1) {
-      String dirPath = path.substring(0, lastSlash);
-      if (!mkdirRecursive(dirPath)) {
-        Serial.println(NOT_OK);
-        return;
-      }
-    }
-
-    File file = SD.open(path, FILE_WRITE, true);
-    if (!file) {
-      Serial.println(NOT_OK);
-      return;
-    }
-
-    if (file.write((const uint8_t *)buf, size))
-      Serial.println(OK);
-    else
-      Serial.println(NOT_OK);
-
-    file.close();
-
-    draw();
   }
 
 private:
