@@ -65,8 +65,7 @@ public:
     bool result = removeDirectoryRecursive(mesg.data);
     Serial.println(result ? OK : NOT_OK);
 
-    if (result)
-      draw();
+    draw();
   }
 
   void handleSP(Message &mesg) {
@@ -168,14 +167,14 @@ public:
   }
 
   void draw() {
+    tft.fillRect(0, 0, width, buttonsHeight, TFT_BLACK);
+
     if (!SD.exists(path))
       path = "/default";
 
     File file = SD.open(path);
     if (!file)
       return;
-
-    tft.fillRect(0, 0, width, buttonsHeight, TFT_BLACK);
 
     if (SD.exists(path + "/aio.jpg"))
       return draw_aio(path);

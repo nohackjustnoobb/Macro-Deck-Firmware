@@ -43,5 +43,9 @@ static bool removeDirectoryRecursive(const String &path) {
   }
 
   dir.close();
+
+  if (path == "/")
+    return true;
+
   return SD.rmdir(path);
 }
