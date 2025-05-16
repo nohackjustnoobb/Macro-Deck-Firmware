@@ -74,6 +74,7 @@ public:
     Serial.println(Message(String("rd?"), String(file.size())).encode());
 
     while (Serial.available() <= 0) {
+      // TODO add max timeout
     }
 
     String reply = Serial.readString();

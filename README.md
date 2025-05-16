@@ -179,4 +179,13 @@ When a status is clicked, a message will be sent with the type `sc` (status clic
 
 - The x coordinate of the click position.
 
-### TODO sync time
+### Sync Time
+
+To synchronize the time, follow these steps:
+
+1. A message is sent with the type `st` (sync time).
+2. The data portion contains:
+   - The epoch time in seconds.
+3. The receiver responds with:
+   - `ok` if the time synchronization was successful.
+   - `!ok` if the synchronization failed.

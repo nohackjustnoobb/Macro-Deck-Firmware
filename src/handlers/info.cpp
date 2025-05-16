@@ -21,18 +21,13 @@ public:
   }
 
   void handleLI() {
-    int16_t infos[] = {width, height, BUTTONS_PER_ROW, NUM_OF_ROWS, GAP_SIZE};
+    std::vector<String> info = {String(width), String(height),
+                                String(BUTTONS_PER_ROW), String(NUM_OF_ROWS),
+                                String(GAP_SIZE)};
 
-    String str;
-    for (int i = 0; i < sizeof(infos) / sizeof(int16_t); i++) {
-      if (i)
-        str += ' ';
-
-      str += String(infos[i]);
-    }
-
-    Serial.println(Message("li", str).encode());
+    Serial.println(Message("li", info).encode());
   }
+
   void handleST(int epoch) {
     rtc.setTime(epoch);
     Serial.println(OK);

@@ -6,6 +6,8 @@
 #include "../../models/handler.h"
 #include "clock.cpp"
 
+#define MAX_SIZE 2048
+
 class StatusManager : public Handler {
 public:
   StatusManager() {
@@ -43,11 +45,36 @@ public:
 
     Serial.println(RD);
 
-    char buf[size];
-    Serial.readBytes(buf, size);
+    JRESULT result;
+    if (size > MAX_SIZE) {
+      File file = SD.open("/temp.jpg", FILE_WRITE, true);
 
-    JRESULT result = TJpgDec.drawJpg(x, y + buttonsHeight + GAP_SIZE,
-                                     (const uint8_t *)buf, size);
+      int bytesRead = 0;
+      while (bytesRead < size) {
+        while (Serial.available() <= 0) {
+          // TODO add max timeout
+        }
+
+        size_t wrote = file.write(Serial.read());
+        if (!wrote) {
+          Serial.println(NOT_OK);
+          file.close();
+          return false;
+        }
+
+        bytesRead++;
+      }
+      file.close();
+
+      result = TJpgDec.drawSdJpg(x, y + buttonsHeight + GAP_SIZE, "/temp.jpg");
+    } else {
+      char buf[size];
+      Serial.readBytes(buf, size);
+
+      result = TJpgDec.drawJpg(x, y + buttonsHeight + GAP_SIZE,
+                               (const uint8_t *)buf, size);
+    }
+
     Serial.println(result ? NOT_OK : OK);
 
     if (!result)
