@@ -43,9 +43,17 @@ public:
 
     int bytesRead = 0;
 
+    unsigned long startTime = millis();
     while (bytesRead < size) {
       while (Serial.available() <= 0) {
+        if (millis() - startTime > MAX_TIMEOUT * 1000) {
+          Serial.println(NOT_OK);
+          file.close();
+          return;
+        }
       }
+
+      startTime = millis();
 
       size_t result = file.write(Serial.read());
       if (!result) {
@@ -73,8 +81,13 @@ public:
 
     Serial.println(Message(String("rd?"), String(file.size())).encode());
 
+    unsigned long startTime = millis();
     while (Serial.available() <= 0) {
-      // TODO add max timeout
+      if (millis() - startTime > MAX_TIMEOUT * 1000) {
+        Serial.println(NOT_OK);
+        file.close();
+        return;
+      }
     }
 
     String reply = Serial.readString();

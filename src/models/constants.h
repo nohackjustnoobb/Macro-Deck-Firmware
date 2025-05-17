@@ -6,7 +6,8 @@
 #define SD_MOSI 23
 
 #define ROTATION 3
-#define MAX_TOUCH_TIME_DIFF 100
+#define MAX_TOUCH_TIME_DIFF 100 // milliseconds
+#define MAX_TIMEOUT 3           // seconds
 
 #define BAUDRATE 115200
 

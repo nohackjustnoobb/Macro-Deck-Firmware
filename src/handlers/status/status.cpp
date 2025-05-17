@@ -50,10 +50,18 @@ public:
       File file = SD.open("/temp.jpg", FILE_WRITE, true);
 
       int bytesRead = 0;
+
+      unsigned long startTime = millis();
       while (bytesRead < size) {
         while (Serial.available() <= 0) {
-          // TODO add max timeout
+          if (millis() - startTime > MAX_TIMEOUT * 1000) {
+            Serial.println(NOT_OK);
+            file.close();
+            return false;
+          }
         }
+
+        startTime = millis();
 
         size_t wrote = file.write(Serial.read());
         if (!wrote) {
